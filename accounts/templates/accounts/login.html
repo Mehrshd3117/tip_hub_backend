@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %} ثبت نام {% endblock %}
+{% block title %} ورود{% endblock %}
+{% load static %}
 {% block content %}
     <main>
         <section class="py-5">
@@ -8,60 +9,50 @@
                     <div class="col-sm-9 col-md-7 col-lg-5">
                         <div class="custom-bg p-2">
 
-                            <div class="my-3 text-center">عضویت در سایت</div>
-                            <form class="">
+                            <div class="my-3 text-center">ورود به حساب</div>
+                            <form method="post">{% csrf_token %}
                                 <div class="field">
                                     <i class="fa fa-envelope"></i>
-                                    <input class="email-input" type="email" placeholder="پست الکترونیک" dir="ltr"
-                                           maxlength="50" required="">
+                                    {{ form.email }}
                                 </div>
 
                                 <div class="field">
                                     <i class="fa fa-lock"></i>
-                                    <input class="password-input" dir="ltr" type="password" placeholder="گذرواژه">
+                                    {{ form.password }}
                                 </div>
-                                <div class="mr-1">
+                                <div class="mr-1 d-flex justify-content-between">
                                     <div>
                                         <input type="checkbox" class="checkbox-input" tabindex="0">
                                         <label class="small">نمایش گذرواژه</label>
                                     </div>
+                                    <div>
+                                        <a href="{% url "accounts:password_reset_form" %}" class="small">رمز عبور خود را فراموش کرده اید؟</a>
+                                    </div>
                                 </div>
 
                                 <div class="my-3">
-                                    <button class="btn custom-btn w-100">عضویت</button>
+                                    <button type="submit" class="btn custom-btn w-100">ورود</button>
                                 </div>
                                 <div class="pb-2 border-bottom">
-                                    <span class="small">حساب کاربری دارید؟</span>
-                                    <a href="register.html" class="small">
-                                        ورود به حساب
+                                    <span class="small">حساب کاربری ندارید؟</span>
+                                    <a href="{% url "accounts:register" %}" class="small">
+                                        عضویت در سایت
                                     </a>
                                 </div>
                             </form>
 
 
                             <div class="">
-                                <p class="small text-center my-3">عضویت از طریق حساب‌های کاربری دیگر</p>
+                                <p class="small text-center my-3">ورود از طریق حساب‌های کاربری دیگر</p>
                                 <div class="">
-
                                     <div class="social-accunt">
-
-                                        <a title="Google" class="" href="">
-                                            <img height="24" src="assets/image/google.svg" class="d-block m-auto">
+                                        <a title="Google" class="" href="{% url 'social:begin' 'google-oauth2' %}">
+                                            <img height="24" src="{% static "assets/image/google.svg" %}"
+                                                 class="d-block m-auto" alt="">
                                         </a>
-
-                                        <a title="GitHub" class="" href="">
-                                            <img height="24" src="assets/image/github.svg" class="d-block m-auto">
-                                        </a>
-
-                                        <a title="LinkedIn" class="" href="">
-                                            <img height="24" src="assets/image/linkedin.svg" class="d-block m-auto">
-                                        </a>
-
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -69,6 +60,7 @@
         </section>
 
     </main>
+
     <script>
         let checkboxInput = document.querySelector('.checkbox-input')
         let passwordInput = document.querySelector('.password-input')
@@ -84,4 +76,5 @@
         })
 
     </script>
+
 {% endblock %}

@@ -1,0 +1,38 @@
+from django.contrib import admin
+from django.forms import Textarea
+from .forms import *
+from .models import User, OtpCode
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.admin import UserAdmin
+
+
+class UserAdminConfig(UserAdmin):
+    form = UserChangeForm
+    add_form = UserCreationForm
+    search_fields = ('email', 'first_name', 'last_name',)
+    list_filter = ('is_active', 'is_admin')
+    ordering = ('-start_date',)
+    list_display = ('email', 'first_name', 'last_name', 'is_active',
+                    'show_image', 'is_admin', 'is_superuser', 'start_date')
+    fieldsets = (
+        (None, {"fields": ("email", "phone_number", "first_name", "last_name", "image",)}),
+        (_("Personal"), {"fields": ("about",)}),
+        (_("Permissions"), {"fields": ("is_active", "is_admin", "is_superuser", "start_date")},),
+    )
+    add_fieldsets = (
+        (None, {"classes": ("wide",),
+                "fields": ("email", "phone_number", "first_name", "last_name", "password1", "password2")},
+         ),
+    )
+    formfield_overrides = {
+        User.about: {'widget': Textarea(attrs={'rows': 10, 'cols': 40})},
+    }
+
+
+class OtpCodeAdmin(admin.ModelAdmin):
+    list_display = ('phone_number', 'code', 'created')
+    list_filter = ('phone_number', 'created')
+
+
+admin.site.register(User, UserAdminConfig)
+admin.site.register(OtpCode, OtpCodeAdmin)

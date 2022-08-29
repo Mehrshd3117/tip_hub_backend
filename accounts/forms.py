@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from .models import NewUser
+from .models import User, OtpCode
 
 
 # User customize
@@ -11,8 +11,8 @@ class UserCreationForm(forms.ModelForm):
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
 
     class Meta:
-        model = NewUser
-        fields = ('username', 'phone_number', 'email', 'first_name', 'about')
+        model = User
+        fields = ('phone_number', 'email', 'first_name', 'last_name', 'about')
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -34,12 +34,13 @@ class UserChangeForm(forms.ModelForm):
     )
 
     class Meta:
-        model = NewUser
+        model = User
         fields = (
             'phone_number',
             'email',
-            'username',
-            'fullname',
+            'first_name',
+            'last_name',
+            'image',
             'about',
             'password',
             'is_active',
@@ -49,11 +50,11 @@ class UserChangeForm(forms.ModelForm):
 
 # User registration and login
 class UserRegisterForm(forms.Form):
-    username = forms.CharField(max_length=200, widget=forms.TextInput(
-        attrs={'class': 'email-input', 'placeholder': 'نام کاربری'}
+    first_name = forms.CharField(max_length=255, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'نام '}
     ))
-    fullname = forms.CharField(max_length=200, widget=forms.TextInput(
-        attrs={'class': 'email-input', 'placeholder': 'نام و نام خانوادگی'}
+    last_name = forms.CharField(max_length=255, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'نام خانوادگی '}
     ))
     email = forms.EmailField(max_length=200, widget=forms.EmailInput(
         attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
@@ -62,31 +63,59 @@ class UserRegisterForm(forms.Form):
         attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}
     ))
     password1 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'password-input', 'placeholder': 'گذرواژه'}
+        attrs={'class': 'password-input', 'dir': 'ltr', 'placeholder': 'گذرواژه'}
     ))
     password2 = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'password-input', 'placeholder': 'تایید گذرواژه'}
+        attrs={'class': 'password-input1', 'dir': 'ltr', 'placeholder': 'تایید گذرواژه'}
     ))
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        user = NewUser.objects.filter(email=email)
+        user = User.objects.filter(email=email)
         if user:
             raise ValidationError(_('This email is already available'))
         return email
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data['phone_number']
-        user = NewUser.objects.filter(phone_number=phone_number)
+        user = User.objects.filter(phone_number=phone_number)
         if user:
             raise ValidationError(_('This mobile number is already available'))
+        # Removed the otp code
+        OtpCode.objects.filter(phone_number=phone_number).delete()
         return phone_number
 
 
 class UserLoginForm(forms.Form):
+    email = forms.EmailField(max_length=200, widget=forms.EmailInput(
+        attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
+    ))
+    password = forms.CharField(widget=forms.PasswordInput(
+        attrs={'class': 'password-input', 'placeholder': 'گذرواژه'}
+    ))
+
+
+class UserEditProfileForm(forms.Form):
+    about = forms.CharField(widget=forms.Textarea(
+        attrs={'class': 'email-input', 'placeholder': 'درباره من '}
+    ))
+    first_name = forms.CharField(max_length=255, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'نام '}
+    ))
+    last_name = forms.CharField(max_length=255, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'نام خانوادگی '}
+    ))
     phone_number = forms.CharField(max_length=11, widget=forms.TextInput(
         attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}
     ))
-    password = forms.CharField(widget=forms.PasswordInput(
-        attrs={'class': 'password-input', 'placeholder': 'گزرواژه'}
+    email = forms.EmailField(max_length=255, widget=forms.EmailInput(
+        attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
+    ))
+    image = forms.ImageField(label='عکس مورد نظر را انتخاب کنید')
+
+
+# one time Password
+class VerifyForm(forms.Form):
+    code = forms.CharField(label='کد', widget=forms.NumberInput(
+        attrs={'class': 'email-input', 'placeholder': 'لطفا کد تایید را وراد کنید '}
     ))

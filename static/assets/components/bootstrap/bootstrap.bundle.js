@@ -2964,7 +2964,7 @@
     var center = reference[side] + reference[len] / 2 - arrowElementSize / 2;
 
     // Compute the sideValue using the updated popper offsets
-    // take popper margin in account because we don't have this info available
+    // take popper margin in accounts because we don't have this info available
     var css = getStyleComputedProperty(data.instance.popper);
     var popperMarginSide = parseFloat(css['margin' + sideCapitalized]);
     var popperBorderSide = parseFloat(css['border' + sideCapitalized + 'Width']);

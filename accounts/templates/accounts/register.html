@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} ثبت نام {% endblock %}
+{% block content %}
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-9 col-md-7 col-lg-5">
+                        <div class="custom-bg p-2">
+
+                            <div class="my-3 text-center">عضویت در سایت</div>
+                            <form method="post">{% csrf_token %}
+
+                                <div class="field">
+                                    <i class="fa fa-user-circle"></i>
+                                    {{ form.first_name }}
+                                </div>
+                                <div class="field">
+                                    <i class="fa fa-user-circle"></i>
+                                    {{ form.last_name }}
+                                </div>
+
+                                <div class="field">
+                                    <i class="fa fa-phone"></i>
+                                    {{ form.phone_number }}
+                                </div>
+
+                                <div class="field">
+                                    <i class="fa fa-envelope"></i>
+                                    {{ form.email }}
+                                </div>
+
+                                <div class="field">
+                                    <i class="fa fa-lock"></i>
+                                    {{ form.password1 }}
+                                </div>
+
+                                <div class="field">
+                                    <i class="fa fa-lock"></i>
+                                    {{ form.password2 }}
+                                </div>
+                                <div class="mr-1">
+                                    <div>
+                                        <input type="checkbox" class="checkbox-input" tabindex="0">
+                                        <label class="small">نمایش گذرواژه</label>
+                                    </div>
+                                </div>
+
+                                <div class="my-3">
+                                    <button type="submit" class="btn custom-btn w-100">عضویت</button>
+                                </div>
+                                <div class="pb-2 border-bottom">
+                                    <span class="small">حساب کاربری دارید؟</span>
+                                    <a href="{% url "accounts:login" %}" class="small">
+                                        ورود به حساب
+                                    </a>
+                                </div>
+                            </form>
+
+
+                            <div class="">
+                                <p class="small text-center my-3">عضویت از طریق حساب‌های کاربری دیگر</p>
+                                <div class="">
+
+                                    <div class="social-accunt">
+
+                                        <a title="Google" class="" href="{% url 'social:begin' 'google-oauth2' %}">
+                                            <img height="24" src="{% static "assets/image/google.svg" %}"
+                                                 class="d-block m-auto">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+        <script>
+
+            let checkboxInput = document.querySelector('.checkbox-input')
+            let passwordInput = document.querySelector('.password-input')
+            let passwordInput1 = document.querySelector('.password-input1')
+
+            let isHide = true
+            checkboxInput.addEventListener('click', () => {
+                if (isHide) {
+                    passwordInput.type = 'text'
+                    passwordInput1.type = 'text'
+                    isHide = false
+                } else {
+                    passwordInput.type = 'password'
+                    passwordInput1.type = 'password'
+                    isHide = true
+                }
+            })
+
+        </script>
+{% endblock %}

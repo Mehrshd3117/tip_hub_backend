@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}پنل کاربری {% endblock %}
+{% load static %}
 {% block content %}
     <main>
 
@@ -7,30 +8,39 @@
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-sm-9 col-md-8 col-lg-8">
-
                         <!-- item1 -->
-
                         <div class="p-3 custom-bg user-details user-item my-2">
                             <div class="row">
+                                <div class="user-panel-profile">
+                                    {% if request.user.image %}
+                                        <img src="{{ request.user.image.url }}" alt="">
+                                    {% else %}
+                                        <img src="{% static "assets/image/sutdent-prof.png" %}" alt="">
+                                    {% endif %}
+                                </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">نام و نام خانوادگی:</p>
-                                    <h6 class=" font-weight-bold">امیرحسین امیری</h6>
+                                    <h6 class=" font-weight-bold">{{ form.first_name }}</h6>
+                                </div>
+                                <div class="col-lg-6 mb-4">
+                                    <p class="">نام و نام خانوادگی:</p>
+                                    <h6 class=" font-weight-bold">{{ form.last_name }}</h6>
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">پست الکترونیک:</p>
-                                    <h6 class=" font-weight-bold">amirhamiri74@gmail.com</h6>
+                                    <h6 class=" font-weight-bold">{{ form.email }}</h6>
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">شماره تلفن همراه:</p>
-                                    <h6 class=" font-weight-bold">09165672323</h6>
+                                    <h6 class=" font-weight-bold">{{ form.phone_number }}</h6>
                                 </div>
                                 <div class="col-lg-6 mb-4">
-                                    <p class="">نام کاربری:</p>
-                                    <h6 class=" font-weight-bold">امیرحسین امیری</h6>
+                                    <p class="">درباره من:</p>
+                                    <h6 class=" font-weight-bold">{{ form.about|truncatewords:20 }}</h6>
                                 </div>
                                 <div class="col-12">
                                     <div class="text-center">
-                                        <a class="" href="edit-user-panel.html">
+                                        <a class="" href="{% url "accounts:edit_profile" %}">
                                             <i class="fa fa-edit"></i>
                                             ویرایش اطلاعات شخصی
                                         </a>
@@ -38,12 +48,10 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
+            </div>
         </section>
-
-
     </main>
 {% endblock %}
 
