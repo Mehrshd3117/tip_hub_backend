@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from .managers import CustomAccountManager
 from django.utils.html import format_html
+from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 
@@ -36,6 +37,9 @@ class User(AbstractUser, PermissionsMixin):
             return format_html(f'<img src="{self.image.url}" width="60px" height="60px">')
         return format_html(f'<h3 style="color: red">no image</h3>')
     show_image.short_description = 'image'
+
+    def get_absolute_url(self):
+        return reverse('accounts:profile', kwargs={'pk': self.pk})
 
     def __str__(self):
         return self.email

@@ -3,7 +3,8 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from .models import User, OtpCode
-
+# Tool packages
+from ckeditor.widgets import CKEditorWidget
 
 # User customize
 class UserCreationForm(forms.ModelForm):
@@ -95,8 +96,9 @@ class UserLoginForm(forms.Form):
     ))
 
 
-class UserEditProfileForm(forms.Form):
-    about = forms.CharField(widget=forms.Textarea(
+class UserEditForm(forms.ModelForm):
+
+    about = forms.CharField(required=False, widget=CKEditorWidget(
         attrs={'class': 'email-input', 'placeholder': 'درباره من '}
     ))
     first_name = forms.CharField(max_length=255, widget=forms.TextInput(
@@ -111,7 +113,11 @@ class UserEditProfileForm(forms.Form):
     email = forms.EmailField(max_length=255, widget=forms.EmailInput(
         attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
     ))
-    image = forms.ImageField(label='عکس مورد نظر را انتخاب کنید')
+    image = forms.ImageField(required=False)
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'about', 'image')
 
 
 # one time Password

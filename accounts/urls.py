@@ -10,9 +10,10 @@ urlpatterns = [
     path('edit_profile/', views.UserEditProfileView.as_view(), name='edit_profile'),
     # one time password
     path('verify/', views.VerifyCode.as_view(), name='verify'),
-    # Password change
+    # password change
     path("password_change/", views.PasswordChange.as_view(), name="password_change"),
     path("password_change_done/", views.PasswordChangeDone.as_view(), name="password_change_done"),
+    # password reset
     path("password_reset/", views.UserPasswordReset.as_view(), name="password_reset_form"),
     path("password_reset/done/", views.USerPasswordResetDone.as_view(), name="password_reset_done"),
     path("reset/<uidb64>/<token>", views.UserPasswordResetConfirm.as_view(), name="password_reset_confirm"),

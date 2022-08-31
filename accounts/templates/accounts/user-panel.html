@@ -36,7 +36,9 @@
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">درباره من:</p>
-                                    <h6 class=" font-weight-bold">{{ form.about|truncatewords:20 }}</h6>
+                                    <h6 class=" font-weight-bold">
+                                        {{ form.about|safe }}
+                                    </h6>
                                 </div>
                                 <div class="col-12">
                                     <div class="text-center">

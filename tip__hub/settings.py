@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'social_django',
     'crispy_forms',
+    'ckeditor'
 
 ]
 
@@ -146,7 +147,12 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-
+# ckeditor
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}
 
 
 

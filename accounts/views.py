@@ -1,6 +1,7 @@
 # django package
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.generic import UpdateView
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -135,50 +136,18 @@ class UserProfileView(View):
         return render(request, 'accounts/user-panel.html', context)
 
 
-class UserEditProfileView(LoginRequiredMixin, View):
-    form_class = UserEditProfileForm
+class UserEditProfileView(LoginRequiredMixin, UpdateView):
+    form_class = UserEditForm
+    model = User
     template_name = 'accounts/edit-user-panel.html'
 
-    def get(self, request):
-        form = self.form_class(
-            initial={
-                'phone_number': request.user.phone_number,
-                'email': request.user.email,
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'about': request.user.about,
-                'image': request.user.image
-            }
-        )
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = self.form_class(
-            data=request.POST,
-            initial={
-                'phone_number': request.user.phone_number,
-                'email': request.user.email,
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'about': request.user.about,
-                'image': request.user.image
-            }
-        )
-        if form.is_valid():
-            cd = form.cleaned_data
-            request.user.phone_number = cd['phone_number']
-            request.user.email = cd['email']
-            request.user.first_name = cd['first_name']
-            request.user.last_name = cd['last_name']
-            request.user.about = cd['about']
-            request.user.image = cd['image']
-            request.user.save()
-        return redirect('accounts:profile', request.user.id)
+    def get_object(self):
+        return User.objects.get(pk=self.request.user.pk)
 
 
 # Password change
 class PasswordChange(views.PasswordChangeView):
-    success_url = reverse_lazy("account:password_change_done")
+    success_url = reverse_lazy("accounts:password_change_done")
     template_name = "accounts/password_change.html"
 
 

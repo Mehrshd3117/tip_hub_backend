@@ -12,18 +12,18 @@
                     <div class="col-sm-9 col-md-11 col-lg-10">
                         <div class="user-panel custom-bg">
 
-                            <form method="post">
+                            <form enctype="multipart/form-data" method="post">
                                 {% csrf_token %}
                                 <div class="user-panel-box">
 
                                     <div class="user-panel-profile">
                                         {% if request.user.image %}
-                                            <img src="{{ request.user.image.url }}" alt="">
+                                            <img src="{{ request.user.image.url }}" alt="" onclick="click_input()">
                                         {% else %}
-                                            <img src="{% static "assets/image/sutdent-prof.png" %}" alt="">
+                                            <img src="{% static "assets/image/sutdent-prof.png" %}" alt="" onclick="click_input()">
                                         {% endif %}
                                     </div>
-                                    <div class="change-profile-btn">
+                                    <div class="change-profile-btn" hidden>
                                         {{ form.image }}
                                     </div>
 
@@ -56,6 +56,7 @@
                                     <!-- item -->
                                     <div class="user-panel-field">
                                         <i class="fa fa-address-book p-2"></i>
+                                        {{ form.media }}
                                         {{ form.about }}
                                     </div>
                                     <!-- item -->
@@ -63,7 +64,7 @@
                                 </div>
 
                                 <div class="d-flex justify-content-center mt-3 ">
-                                    <button type="submit" class="btn custom-btn w-50">اعمال تغییرات</button>
+                                    <button type="submit" class="btn custom-btn w-50" href="{{ form.get_absolute_url }}">اعمال تغییرات</button>
                                 </div>
 
                             </form>
@@ -75,6 +76,11 @@
         </section>
 
     </main>
+    <script>
+        function click_input() {
+            document.getElementById('id_image').click()
+        }
+    </script>
 
 {% endblock %}
 

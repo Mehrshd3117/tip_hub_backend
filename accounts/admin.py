@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.forms import Textarea
-from .forms import *
+from . import forms
 from .models import User, OtpCode
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 
 
 class UserAdminConfig(UserAdmin):
-    form = UserChangeForm
-    add_form = UserCreationForm
+    form = forms.UserChangeForm
+    add_form = forms.UserCreationForm
     search_fields = ('email', 'first_name', 'last_name',)
     list_filter = ('is_active', 'is_admin')
     ordering = ('-start_date',)
