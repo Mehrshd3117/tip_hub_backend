@@ -5,6 +5,10 @@ from .models import User, OtpCode
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 
+admin.site.site_header = 'مدیریت سایت'
+admin.site.site_title = 'صفحه مدیریت'
+admin.site.index_title = 'تیپ هاب'
+
 
 class UserAdminConfig(UserAdmin):
     form = forms.UserChangeForm

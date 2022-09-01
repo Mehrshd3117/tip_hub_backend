@@ -10,7 +10,7 @@ from ckeditor.fields import RichTextField
 
 class User(AbstractUser, PermissionsMixin):
     username = None
-    phone_number = models.CharField(unique=True, max_length=11, null=True, blank=True)
+    phone_number = models.CharField(unique=True, max_length=11)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=100, verbose_name='نام',
                                   blank=True, null=True)
@@ -28,10 +28,6 @@ class User(AbstractUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
 
-    class Meta:
-        verbose_name = _('کاربر')
-        verbose_name_plural = _('کاربرها')
-
     def show_image(self):
         if self.image:
             return format_html(f'<img src="{self.image.url}" width="60px" height="60px">')
@@ -43,6 +39,10 @@ class User(AbstractUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    class Meta:
+        verbose_name = _('کاربر')
+        verbose_name_plural = _('کاربرها')
 
     @property
     def is_staff(self):

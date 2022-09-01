@@ -8,7 +8,6 @@ class CustomAccountManager(BaseUserManager):
 
         other_fields.setdefault('is_admin', True)
         other_fields.setdefault('is_superuser', True)
-        other_fields.setdefault('is_active', True)
 
         if other_fields.get('is_admin') is not True:
             raise ValueError(_(

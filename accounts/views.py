@@ -68,19 +68,17 @@ class VerifyCode(View):
         code_instance = OtpCode.objects.get(phone_number=user_session['phone_number'])
         form = self.form_class(request.POST)
         if form.is_valid():
-            print('parimah')
             cd = form.cleaned_data
             if cd['code'] == str(code_instance.code):
-                print('mehrshad')
                 user = User.objects.create_user(
-                    user_session['first_name'],
-                    user_session['last_name'],
-                    user_session['phone_number'],
-                    user_session['email'],
-                    user_session['password']
+                    first_name=user_session['first_name'],
+                    last_name=user_session['last_name'],
+                    email=user_session['email'],
+                    phone_number=user_session['phone_number'],
+                    password=user_session['password']
                 )
                 code_instance.delete()
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, "You're registered.", 'success')
                 return redirect('home:main')
             else:
@@ -162,8 +160,21 @@ class UserPasswordReset(views.PasswordResetView):
     success_url = reverse_lazy('accounts:password_reset_done')
     email_template_name = 'accounts/password_reset_email.html'
 
+    def form_valid(self, form):
+        email = form.cleaned_data.get('email')
+        if not User.objects.filter(email=email).exists():
+            form.add_error('email', 'کاربری با این ایمیل موجود نیست')
+            return super(UserPasswordReset, self).form_invalid(form)
+        else:
+            return super(UserPasswordReset, self).form_valid(form)
 
-class USerPasswordResetDone(views.PasswordResetDoneView):
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('account:login')
+        return super().get(*args, **kwargs)
+
+
+class UserPasswordResetDone(views.PasswordResetDoneView):
     template_name = 'accounts/password_reset_done.html'
 
 
@@ -174,6 +185,3 @@ class UserPasswordResetConfirm(views.PasswordResetConfirmView):
 
 class UserPasswordResetComplete(views.PasswordResetCompleteView):
     template_name = 'accounts/password_reset_complete.html'
-
-
-

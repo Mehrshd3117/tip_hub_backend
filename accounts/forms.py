@@ -6,6 +6,7 @@ from .models import User, OtpCode
 # Tool packages
 from ckeditor.widgets import CKEditorWidget
 
+
 # User customize
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
