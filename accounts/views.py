@@ -72,7 +72,7 @@ class VerifyCode(View):
             cd = form.cleaned_data
             if cd['code'] == str(code_instance.code):
                 print('mehrshad')
-                User.objects.create_user(
+                user = User.objects.create_user(
                     user_session['first_name'],
                     user_session['last_name'],
                     user_session['phone_number'],
@@ -80,6 +80,7 @@ class VerifyCode(View):
                     user_session['password']
                 )
                 code_instance.delete()
+                login(request, user)
                 messages.success(request, "You're registered.", 'success')
                 return redirect('home:main')
             else:
