@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% block title %}تغییر ویدیو {% endblock %}
+    {#    <form method="post">{% csrf_token %}#}
+    {#        {{ form.as_p }}#}
+    {#        <input type="submit" value="Update">#}
+    {#    </form>#}
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row d-flex justify-content-center">
+                    <div class="col-sm-9 col-md-11 col-lg-10">
+                        <div class="user-panel custom-bg">
+
+                            <form enctype="multipart/form-data" method="post">
+                                {% csrf_token %}
+                                <div class="user-panel-box">
+
+
+                                    <!-- item -->
+                                    <div class="user-panel-field">
+                                        <i class="fa fa-user"></i>
+                                        {{ form.title }}
+                                    </div>
+                                    <!-- item -->
+
+                                    <!-- item -->
+                                    <div class="change">
+                                        <i class="fa fa-video-camera"></i>
+                                        {{ form.video }}
+                                    </div>
+                                    <!-- item -->
+
+
+                                    <!-- item -->
+                                    <div class="user-panel-field">
+                                        <i class="fa fa-address-book p-2"></i>
+                                        {{ form.media }}
+                                        {{ form.description }}
+                                    </div>
+                                    <!-- item -->
+
+                                </div>
+
+                                <div class="d-flex justify-content-center mt-3 ">
+                                    <button type="submit" class="btn custom-btn w-50">اعمال تغییرات</button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+{% endblock %}

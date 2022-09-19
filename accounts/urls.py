@@ -8,6 +8,12 @@ urlpatterns = [
     path('logout/', views.UserLogoutView.as_view(), name='logout'),
     path('profile/<int:pk>/', views.UserProfileView.as_view(), name='profile'),
     path('edit_profile/', views.UserEditProfileView.as_view(), name='edit_profile'),
+    # favourite video
+    path('favourite/<int:myid>/', views.User_Favourite_Add.as_view(), name='favourite_add'),
+    path('profile/favourites', views.User_Favourite_List.as_view(), name='favourite_list'),
+    # masters
+    path('masters/', views.UserMastersView.as_view(), name='master'),
+    path('masters/profile/<int:pk>', views.user_master_info, name='master_info'),
     # one time password
     path('verify/', views.VerifyCode.as_view(), name='verify'),
     # password change

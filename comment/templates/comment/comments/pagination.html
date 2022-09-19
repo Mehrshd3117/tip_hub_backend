@@ -1,0 +1,35 @@
+{% load i18n %}
+<nav id="pagination-nav" aria-label={% trans "Page navigation" %} class="mt-3">
+    {% trans "Next" as Next %}
+    {% trans "Previous" as Previous %}
+    <ul class="pagination justify-content-center pagination-sm">
+        {% if comments.has_previous %}
+
+            <li>
+                <a class="mx-1" href="?page={{ comments.previous_page_number }}"><i
+                        class="fa fa-chevron-right"></i></a>
+            </li>
+        {% endif %}
+        {% if comments.number > 3 %}
+            <li>
+                <a class="mx-1" href="?page=1">...</a>
+            </li>
+        {% endif %}
+
+        {% for page in comments.paginator.page_range %}
+            {% if comments.number == page %}
+                <a class="mx-1 active">{{ page }}</a>
+            {% else %}
+                <a href="?page={{ page }}">{{ page }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if comments.has_next %}
+            <li>
+                <a class="mx-1" href="?page={{ comments.next_page_number }}"><i
+                        class="fa fa-chevron-left"></i>
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>

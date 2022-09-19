@@ -10,29 +10,37 @@ from ckeditor.fields import RichTextField
 
 class User(AbstractUser, PermissionsMixin):
     username = None
-    phone_number = models.CharField(unique=True, max_length=11)
-    email = models.EmailField(unique=True)
+    phone = models.CharField(unique=True, max_length=11, verbose_name='شماره تماس', null=True, blank=True)
+    email = models.EmailField(unique=True, verbose_name='پست الکترونیک')
     first_name = models.CharField(max_length=100, verbose_name='نام',
                                   blank=True, null=True)
     last_name = models.CharField(max_length=100, verbose_name='نام خانوادگی',
                                  blank=True, null=True)
-    image = models.ImageField(upload_to='user/', null=True, blank=True)
-    about = RichTextField(_(
-        'about'), null=True, blank=True)
-    start_date = models.DateTimeField(default=timezone.now)
-    is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    image = models.ImageField(upload_to='user/', null=True, blank=True, verbose_name='عکس')
+    bio = RichTextField(_('بیوگرافی'), null=True, blank=True)
+    start_date = models.DateTimeField(default=timezone.now, verbose_name='تاریخ عضویت')
+    is_admin = models.BooleanField(default=False, verbose_name='مدیر')
+    is_active = models.BooleanField(default=True, verbose_name='فعال,غیرغعال')
+    instagram = models.URLField(blank=True, null=True, unique=True,
+                                verbose_name='آیدی اینستاگرام')
+    github = models.URLField(blank=True, null=True, unique=True,
+                             verbose_name='آدرس گیت هاب')
+    linkedin = models.URLField(blank=True, null=True, unique=True,
+                               verbose_name='آدرس لینکدین')
+    twitter = models.URLField(blank=True, null=True, unique=True,
+                              verbose_name='آدرس توییتر')
 
     objects = CustomAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone']
 
     def show_image(self):
         if self.image:
             return format_html(f'<img src="{self.image.url}" width="60px" height="60px">')
         return format_html(f'<h3 style="color: red">no image</h3>')
-    show_image.short_description = 'image'
+
+    show_image.short_description = 'عکس'
 
     def get_absolute_url(self):
         return reverse('accounts:profile', kwargs={'pk': self.pk})
@@ -50,13 +58,13 @@ class User(AbstractUser, PermissionsMixin):
 
 
 class OtpCode(models.Model):
-    phone_number = models.CharField(max_length=11, unique=True)
-    code = models.IntegerField()
-    created = models.DateTimeField(auto_now=True)
+    phone = models.CharField(max_length=11, verbose_name='شماره تماس')
+    code = models.IntegerField(verbose_name='رمز')
+    expiration_date = models.DateTimeField(auto_now=True, verbose_name='تاریخ انقضا')
 
     def __str__(self):
-        return self.phone_number
+        return self.phone
 
-
-
-
+    class Meta:
+        verbose_name = _('رمز یک بار مصرف')
+        verbose_name_plural = _('رمزهای یک بار مصرف')

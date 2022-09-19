@@ -1,0 +1,10 @@
+{% load i18n %}
+<p class="px-4 py-2 comment-text text-justify {% block content_text_cls %}mb-0{% endblock content_text_cls %}">
+    {% if text_2 %}
+        {{ text_1 }}
+        <span class="d-none">{{ text_2 }}</span>
+        <button class="js-read-more-btn {% block read_more_cls %}btn btn-link btn-xs read-more{% endblock read_more_cls %}">{% trans "ادامه مطلب" %}...</button>
+    {% else %}
+        {{ text_1 }}
+    {% endif %}
+</p>

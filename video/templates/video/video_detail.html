@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% block title %} صفحه جزئیات ویدیو{% endblock %}
+{% load static %}
+{% load comment_tags %}
+{% block content %}
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div>
+                            <!-- video -->
+                            <div class="video-player-box">
+                                <div class="video-icon">
+                                    <div class="btn video-btn" onclick="playvideo()" id="videobtn">
+                                        <img src="{% static "assets/image/play-video-btn.png" %}" alt="">
+                                    </div>
+                                </div>
+                                <div class="video">
+                                    <video width="400px" height="400px" id="myVideo">
+                                        <source src="{{ video.video.url }}" type="video/mp4">
+                                    </video>
+                                    <img src="{{ video.image.url }}" width="100%" height="100%"
+                                         class="position-absolute video-poster" alt="">
+
+                                    <div class="video-overlay"></div>
+                                    <div class="video-description px-2 text-white">
+
+                                        <p>{{ video.time }} دقیقه</p>
+                                    </div>
+                                    <h5 class="close-btn" onclick="stopPlayer()">X</h5>
+                                </div>
+                            </div>
+                            <!-- end video -->
+                            <!-- delete video -->
+                            {% if is_self %}
+                                <form class="my-3" action="{% url 'videos:video_delete' pk=video.id %}"
+                                      method="POST">{% csrf_token %}
+                                    <button class="btn btn-outline-danger" onclick="confirmation()" type="submit">
+                                        Delete
+                                    </button>
+                                </form><br>
+                                <li><a class="btn btn-outline-info" href="{% url 'videos:video_edit' pk=video.pk %}">Edit</a>
+                                </li>
+                            {% endif %}
+                            <!-- end delete video -->
+                            {% if request.user.is_authenticated %}
+                                {% if fav %}
+                                    <li style="margin-top: 10px"><a class="btn btn-outline-danger"
+                                   href="{% url 'accounts:favourite_list'%}">Remove Favourite</a>
+                            </li>
+                                {% else %}
+                                    <li style="margin-top: 10px"><a class="btn btn-outline-info"
+                                   href="{% url 'accounts:favourite_add' video.id %}">Add to Favourite</a>
+                            </li>
+                                {% endif %}
+                            {% else %}
+                                <li style="margin-top: 10px"><a class="btn btn-outline-info"
+                                   href="{% url 'accounts:register' %}">add to favourite</a>
+                            {% endif %}
+                            <!-- title -->
+                            <h3 class="video-title my-3">{{ video.title }}</h3>
+                            <div class="d-flex align-items-center justify-content-between border-bottom pb-3">
+                                <p class="color78">زمان انتشار: {{ video.jalali_created }}</p>
+                                <div class="d-flex align-items-center view-like">
+                                    <div class="mx-3">
+                                        <span>{{ video.views.count }}</span>
+                                        <i class="fa fa-eye"></i>
+                                    </div>
+                                    <div>
+                                        {% if is_liked %}
+                                            <a onclick="all_like('{{ video.slug }}', '{{ video.id }}')"><span
+                                                    id="count"
+                                                    style="padding: 4px">{{ video.likes.all.count }}</span>
+                                                <i id="like_video"
+                                                   style="font-size:20px"
+                                                   class="fa fa-heart liked">
+                                                </i>
+                                            </a>
+
+                                        {% else %}
+                                            <a onclick="all_like('{{ video.slug }}', '{{ video.id }}')"><span
+                                                    id="count"
+                                                    style="padding: 4px">{{ video.likes.all.count }}</span>
+                                                <i id="like_video"
+                                                   style="font-size:20px"
+                                                   class="fa fa-heart-o"
+                                                   aria-hidden="true">
+                                                </i>
+                                            </a>
+
+                                        {% endif %}
+
+                                        <!-- <i class="fa fa-heart liked" type='button' aria-hidden="true" ></i> -->
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <!-- description -->
+                            <div class="border-bottom pb-3">
+                                <h4 class="my-3">درباره فیلم</h4>
+                                <p class="color78">{{ video.description|safe }}</p>
+
+
+                                <div class="labels">
+                                    <h4 class="my-3">برچسب ها</h4>
+                                    <ul class="d-flex align-items-center">
+                                        <li><a href="#" title="">#گردشگری</a></li>
+                                        <li><a href="#" title="">#تفریحی </a></li>
+                                        <li><a href="#" title="">#دشت نور</a></li>
+                                        <li><a href="#" title="">#مکان های تفریحی</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- end des -->
+
+
+                            <!-- comments -->
+                            {% render_comments video request %}
+                            {% include_bootstrap %}
+                            <!-- end comments -->
+
+                        </div>
+                    </div>
+                    <!-- main -->
+                    <!-- side -->
+                    <aside class="col-md-4 ">
+                        <div class="custom-bg p-2 teacher-card">
+                            <div class="border-bottom py-3 text-center">
+                                <h4>درباره استاد</h4>
+                            </div>
+                            <div class="d-flex align-items-center py-3">
+                                {% if request.user.image %}
+                                    <img src={{ request.user.image.url }} alt="student" class="teacher-profile">
+                                {% else %}
+                                    <img src={% static 'assets/image/sutdent-prof.png' %} alt="student"
+                                         class="teacher-profile">
+                                {% endif %}
+                                <p class="user-name pr-2">{{ video.admin.first_name }}</p>
+                            </div>
+                            {% if video.admin.bio %}
+                                <p class="color78 teacher-description py-3">{{ video.admin.bio|safe }}</p>
+                            {% else %}
+                                <p class="color78 teacher-description py-3">بیوگرافی مدرس خالی میباشد</p>
+                            {% endif %}
+
+                            <div class="teacher-social-media d-flex align-items-center justify-content-center flex-wrap">
+                                {% if video.admin.instagram  != None %}
+                                    <a href="{{ video.admin.instagram }}">
+                                        <i class="fa fa-instagram"> </i>
+                                    </a>
+                                {% endif %}
+                                {% if video.admin.github != None %}
+                                    <a href="{{ video.admin.github }}">
+                                        <i class="fa fa-github"></i>
+                                    </a>
+                                {% endif %}
+                                {% if video.admin.linkedin != None %}
+                                    <a href="{{ video.admin.linkedin }}">
+                                        <i class="fa fa-linkedin"></i>
+                                    </a>
+                                {% endif %}
+                                {% if video.admin.twitter != None %}
+                                    <a href="{{ video.admin.twitter }}">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </aside>
+                    <!-- end side -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <script>
+        // video-player
+        const videobtn = document.querySelector('.video-btn');
+        const video = document.querySelector('.video');
+        const videotag = document.querySelector('video')
+        const videoDescription = document.querySelector('.video-description')
+        const closeBtn = document.querySelector('.close-btn')
+        const videoPoster = document.querySelector('.video-poster')
+        const videoOverlay = document.querySelector('.video-overlay')
+
+        function stopPlayer() {
+            videobtn.style.display = "block";
+            closeBtn.style.display = 'none';
+            videoPoster.style.display = 'inline'
+            video.style.zIndex = '-1'
+            videotag.pause()
+            videotag.style.borderRadius = '20px'
+            videoDescription.style.display = 'flex'
+            videotag.controls = false
+            videotag.style.borderRadius = '15px'
+            videoOverlay.style.display = 'block'
+        };
+
+        function playvideo() {
+            videobtn.style.display = "none";
+            video.style.zIndex = '22222'
+            videotag.autoplay = true
+            videotag.play()
+            videotag.style.borderRadius = '20px'
+            videotag.controls = true
+            videoDescription.style.display = 'none'
+            closeBtn.style.display = 'block'
+            videoPoster.style.display = 'none'
+            videoOverlay.style.display = 'none'
+        }
+    </script>
+    <script>
+        function confirmation() {
+            var result = confirm("آیا از حذف اطمینان دارید ?");
+            if (result) {
+                alert("Video deleted successfully")
+            }
+        }
+    </script>
+{% endblock %}
+

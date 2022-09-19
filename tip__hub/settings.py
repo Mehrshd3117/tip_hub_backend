@@ -19,6 +19,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'admin_persian',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,12 +30,15 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'accounts.apps.AccountConfig',
     'video.apps.VideoConfig',
+    'comment',
+    'extensions',
+
 
     # Tool packages
     'django_cleanup.apps.CleanupConfig',
     'social_django',
     'crispy_forms',
-    'ckeditor'
+    'ckeditor',
 
 ]
 
@@ -46,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'video.middleware.SaveIpAddressMiddleware',
 ]
 
 ROOT_URLCONF = 'tip__hub.urls'
@@ -62,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'context_processors.context_processors.categories',
             ],
         },
     },
@@ -114,20 +120,15 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    os.path.join(BASE_DIR, 'media')
 ]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_cdn')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # customize user model
 AUTH_USER_MODEL = 'accounts.User'
 
-
 # crispy_form
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
 
 # social auth configuration
 AUTHENTICATION_BACKENDS = (
@@ -159,5 +160,4 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-
-
+COMMENT_PER_PAGE = 10

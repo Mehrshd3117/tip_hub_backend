@@ -11,6 +11,7 @@
                         <!-- item1 -->
                         <div class="p-3 custom-bg user-details user-item my-2">
                             <div class="row">
+
                                 <div class="user-panel-profile">
                                     {% if request.user.image %}
                                         <img src="{{ request.user.image.url }}" alt="">
@@ -32,12 +33,12 @@
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">شماره تلفن همراه:</p>
-                                    <h6 class=" font-weight-bold">{{ form.phone_number }}</h6>
+                                    <h6 class=" font-weight-bold">{{ form.phone }}</h6>
                                 </div>
                                 <div class="col-lg-6 mb-4">
                                     <p class="">درباره من:</p>
                                     <h6 class=" font-weight-bold">
-                                        {{ form.about|safe }}
+                                        {{ form.bio|safe }}
                                     </h6>
                                 </div>
                                 <div class="col-12">
@@ -56,4 +57,3 @@
         </section>
     </main>
 {% endblock %}
-

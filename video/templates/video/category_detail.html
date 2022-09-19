@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ category.title }}
+{% endblock %}
+
+{% block content %}
+    <main>
+        <section class="py-5">
+            <div class="container">
+                {% if videos %}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="title-section">همه ویدیوها با دسته بندی {{ category.title }}</h2>
+                    </div>
+                    <div class="row">
+                        <!-- item -->
+                        {% for video in videos %}
+                            <!-- item -->
+                            <div class="col-md-6 col-lg-4 my-2">
+                                <div class="custom-bg">
+                                    <div class="video-card">
+                                        <a href="{{ video.get_absolute_url }}" class="position-relative d-block ">
+                                            <img src="{{ video.image.url }}" alt="" class="img-fluid w-100 h-100">
+                                            <div class="video-play-btn">
+                                                <i class="fa fa-play"></i>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between video-category-time">
+                                                <h6 class="">{{ video.title }}</h6>
+                                                <span class="vid-time">{{ video.time }}</span>
+                                            </div>
+                                            <div class="video-card-details">
+                                                <div>
+                                                    <span>{{ video.views.count }}</span>
+                                                    <i class="fa fa-eye"></i>
+                                                </div>
+                                                <div>
+                                                    <span id="count">{{ video.likes.all.count }}</span>
+                                                    <i class="fa fa-heart"></i>
+                                                </div>
+                                                <div>
+                                                    <span>{{ video.comments.all.count }}</span>
+                                                    <i class="fa fa-comment"></i>
+                                                </div>
+                                            </div>
+                                            <div class="article-overlay"></div>
+                                        </a>
+
+                                    </div>
+                                    <a href="{{ video.get_absolute_url }}">
+                                        <h5 class="video-card-title m-2">{{ video.description|safe }}</h5>
+                                    </a>
+                                    <div class="my-3 pb-3 mx-2">
+                                        <i class="fa fa-user  ml-1 "></i>
+                                        <span>{{ video.admin }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end item -->
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="title-section">هیچ ویدئو با دسته بندی {{ category.title }} پیدا نشد</h2>
+
+                    </div>
+                {% endif %}
+
+                <div class="d-flex align-items-center justify-content-center mb-3 pagination">
+                    {% if videos.has_other_pages %}
+                        {% if videos.has_previous %}
+                            <a href="?page={{ videos.previous_page_number }}" class="mx-1"><i
+                                    class="fa fa-chevron-right"></i></a>
+                        {% endif %}
+                        {% if videos.number > 3 %}
+                            <li>
+                                <a class="mx-1" href="?page=1">...</a>
+                            </li>
+                        {% endif %}
+                        {% for page in videos.paginator.page_range %}
+                            {% if videos.number == page %}
+                                <a href="?page={{ page }}" class="active mx-1">{{ page }}</a>
+                            {% else %}
+                                <a href="?page={{ page }}">{{ page }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        {% if videos.has_next %}
+                            <a href="?page={{ videos.next_page_number }}" class="mx-1"><i
+                                    class="fa fa-chevron-left"></i></a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% load comment_tags %}
+{% load i18n %}
+{% load static %}
+
+<div id="{{ comment.urlhash }}"
+     class="js-updated-comment comment my-3 p-2 {% if comment.has_flagged_state %}flagged-comment {% endif %}{% block content_wrapper_cls %}{% if has_valid_profile %}col-9 col-md-10{% else %}co-11 mx-3{% endif %}{% endblock content_wrapper_cls %}">
+    {% block comment_content %}
+        <div class=" d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center justify-content-center">
+                {% if comment.user.image %}
+                    <img src="{{ comment.user.image.url }}" alt="student" class="user-profile">
+
+                {% else %}
+                    <img src="{% static "assets/image/sutdent-prof.png" %}" alt="student" class="user-profile">
+
+                {% endif %}
+                <p class="user-name pr-2" style="margin: auto">
+
+                    {% if comment.user.first_name %}
+                        {{ comment.user.first_name }}
+                    {% else %}
+                        {{ comment.user }}
+                    {% endif %}
+
+                </p>
+            </div>
+        </div>
+        {% if render_markdown %}
+            {% render_content comment markdown=True %}
+        {% else %}
+            {% render_content comment markdown=False %}
+        {% endif %}
+
+    {% endblock comment_content %}
+    <div class=" {% block footer_wrapper_cls %}mt-2 text-muted{% endblock footer_wrapper_cls %}">
+        <small>
+            {% if comment.is_edited %}
+                <span class="font-italic"
+                      title="{% trans 'ویرایش شده' %}">{% blocktrans with edited_time=comment.edited|timesince %}ویرایش
+                    شده:
+                    {{ edited_time }} قبل{% endblocktrans %}</span>
+            {% else %}
+                <span class="font-italic"
+                      title="{% trans 'پست شده' %}">{% blocktrans with posted_time=comment.posted|timesince %}
+                    {{ posted_time }} قبل{% endblocktrans %}</span>
+            {% endif %}
+
+            {% can_delete_comment comment user as can_delete %}
+            {% if comment.user == user %}
+                | {% include 'comment/comments/edit_icon.html' %}
+                {% include 'comment/comments/delete_icon.html' %}
+            {% elif can_delete %}
+                | {% include 'comment/comments/delete_icon.html' %}
+                {% if comment.is_flagged %}
+                    {% include 'comment/comments/reject_icon.html' %}
+                    {% if comment.is_edited %}
+                        {% include 'comment/comments/resolve_icon.html' %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            {% if user|can_block_users %}
+                {% include 'comment/block/block_icon.html' %}
+            {% endif %}
+            {% if comment.is_parent %}
+                {% get_replies_count comment user as reply_count %}
+                |
+                <span class="js-reply-number {% block reply_count_cls %}text-dark{% endblock reply_count_cls %}">{{ reply_count }}</span>
+                <a class="js-reply-link {% block reply_link_cls %}btn btn-link ml-1{% endblock reply_link_cls %}"
+                   href="#">
+                    {% blocktrans count reply_count=reply_count %} پاسخ{% plural %} پاسخ ها{% endblocktrans %}
+                </a>
+                {% if comment.user == user and is_subscription_allowed %}
+                    <div class="{% block follow_icon_wrapper_cls %}d-inline ml-3{% endblock follow_icon_wrapper_cls %}">
+                        {% include 'comment/follow/follow.html' with model_object=comment btnId=comment.id %}
+                    </div>
+                {% endif %}
+            {% endif %}
+        </small>
+        {% include "comment/reactions/reactions.html" with comment=comment %}
+    </div>
+</div>

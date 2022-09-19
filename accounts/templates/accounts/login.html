@@ -10,6 +10,13 @@
                         <div class="custom-bg p-2">
 
                             <div class="my-3 text-center">ورود به حساب</div>
+                            {% if form.errors %}
+                                {% for error in form.error_messages %}
+                                    <li style="list-style-type: disc; color: #ad3f4a"
+                                        class="text-center">{{ error }}</li>
+                                {% endfor %}
+                            {% endif %}
+
                             <form method="post">{% csrf_token %}
                                 <div class="field">
                                     <i class="fa fa-envelope"></i>
@@ -26,7 +33,8 @@
                                         <label class="small">نمایش گذرواژه</label>
                                     </div>
                                     <div>
-                                        <a href="{% url "accounts:password_reset_form" %}" class="small">رمز عبور خود را فراموش کرده اید؟</a>
+                                        <a href="{% url "accounts:password_reset_form" %}" class="small">رمز عبور خود را
+                                            فراموش کرده اید؟</a>
                                     </div>
                                 </div>
 

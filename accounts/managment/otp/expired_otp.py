@@ -9,5 +9,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         expired_time = datetime.now(tz=pytz.timezone('Asia/Tehran')) - timedelta(minutes=2)
-        OtpCode.objects.filter(created__lt=expired_time).delete()
+        OtpCode.objects.filter(expiration_date__lt=expired_time).delete()
         self.stdout.write('Expired otp codes removed.')

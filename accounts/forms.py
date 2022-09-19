@@ -1,8 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.forms import ReadOnlyPasswordHashField, AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from .models import User, OtpCode
+from django.core import validators
 # Tool packages
 from ckeditor.widgets import CKEditorWidget
 
@@ -14,7 +15,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('phone_number', 'email', 'first_name', 'last_name', 'about')
+        fields = ('phone', 'email', 'first_name', 'last_name', 'bio')
 
     def clean_password2(self):
         cd = self.cleaned_data
@@ -38,12 +39,12 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = (
-            'phone_number',
+            'phone',
             'email',
             'first_name',
             'last_name',
             'image',
-            'about',
+            'bio',
             'password',
             'is_active',
             'is_admin'
@@ -61,9 +62,9 @@ class UserRegisterForm(forms.Form):
     email = forms.EmailField(max_length=200, widget=forms.EmailInput(
         attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
     ))
-    phone_number = forms.CharField(max_length=11, widget=forms.TextInput(
-        attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}
-    ))
+    phone = forms.CharField(max_length=11, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}),validators=[validators.MaxValueValidator(11)]
+    )
     password1 = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'password-input', 'dir': 'ltr', 'placeholder': 'گذرواژه'}
     ))
@@ -78,28 +79,30 @@ class UserRegisterForm(forms.Form):
             raise ValidationError(_('This email is already available'))
         return email
 
-    def clean_phone_number(self):
-        phone_number = self.cleaned_data['phone_number']
-        user = User.objects.filter(phone_number=phone_number)
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        user = User.objects.filter(phone_number=phone)
         if user:
             raise ValidationError(_('This mobile number is already available'))
         # Removed the otp code
-        OtpCode.objects.filter(phone_number=phone_number).delete()
-        return phone_number
+        OtpCode.objects.filter(phone_number=phone).delete()
+        return phone
 
 
-class UserLoginForm(forms.Form):
+class UserLoginForm(AuthenticationForm):
     email = forms.EmailField(max_length=200, widget=forms.EmailInput(
         attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
     ))
     password = forms.CharField(widget=forms.PasswordInput(
         attrs={'class': 'password-input', 'placeholder': 'گذرواژه'}
     ))
+    error_messages = {
+        "کاربری با این مشخصات موجود نیست",
+    }
 
 
 class UserEditForm(forms.ModelForm):
-
-    about = forms.CharField(required=False, widget=CKEditorWidget(
+    bio = forms.CharField(required=False, widget=CKEditorWidget(
         attrs={'class': 'email-input', 'placeholder': 'درباره من '}
     ))
     first_name = forms.CharField(max_length=255, widget=forms.TextInput(
@@ -108,9 +111,9 @@ class UserEditForm(forms.ModelForm):
     last_name = forms.CharField(max_length=255, widget=forms.TextInput(
         attrs={'class': 'email-input', 'placeholder': 'نام خانوادگی '}
     ))
-    phone_number = forms.CharField(max_length=11, widget=forms.TextInput(
-        attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}
-    ))
+    phone = forms.CharField(required=False, max_length=11, widget=forms.TextInput(
+        attrs={'class': 'email-input', 'placeholder': 'شماره تماس'}), validators=[validators.MaxValueValidator(11)]
+    )
     email = forms.EmailField(max_length=255, widget=forms.EmailInput(
         attrs={'class': 'email-input', 'placeholder': 'پست الکترونیک'}
     ))
@@ -118,7 +121,7 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'about', 'image')
+        fields = ('first_name', 'last_name', 'email', 'phone', 'bio', 'image')
 
 
 # one time Password

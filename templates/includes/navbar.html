@@ -1,9 +1,9 @@
 {% load static %}
+
 <div class="shadow position-fixed w-100 h-100 d-md-none d-lg-none"></div>
 <!-- top-header -->
 <header class="position-relative">
     <div class="main-header position-relative">
-
         <div class="nav-header-box mob1 d-md-flex d-lg-flex align-items-center justify-content-between">
 
             <div class="d-flex flex-column flex-md-row align-items-center pr-md-4">
@@ -13,10 +13,14 @@
                                                          alt=""/></a>
                 </div>
                 <!-- SEARCH -->
-                <div class="nav-search-btn">
-                    <input type="search" placeholder="جستجو">
-                    <i class="fa fa-search"></i>
-                </div>
+                <form action="{% url "videos:search" %}" method="get">
+                    <div class="nav-search-btn">
+                        <input type="search" name="q" value="{{ request.GET.q }}" required placeholder="جستجو">
+
+                        <button type="submit"><i class="fa fa-search"></i></button>
+
+                    </div>
+                </form>
                 <!-- END SEARCH -->
 
             </div>
@@ -54,7 +58,7 @@
                              aria-labelledby="dropdownMenuButton">
                             {% if request.user.is_authenticated %}
                                 <a class="" href="{% url 'accounts:profile' request.user.id %}"> پروفایل</a>
-                                <a class="" href="#"> مورد علاقه ها</a>
+                                <a class="" href="{% url 'accounts:favourite_list' %}"> مورد علاقه ها</a>
                                 <a class="" href="{% url 'accounts:logout' %}"> خروج</a>
                             {% else %}
                                 <a class="" href="{% url 'accounts:login' %}">
@@ -73,49 +77,30 @@
 
 </header>
 
-<nav class="nav-menu nav-menu-pc  d-none d-md-flex px-4" id="navbar">
-    <li id="" class="mx-3 menu-item"><a href="" class="nav-menu-item ">زبان های برنامه نویسی </a>
-        <ul class="sub-menu">
-            <a href="">جاوا</a>
-            <a href="">پایتون </a>
-            <a href="">آیتم</a>
-            <a href=""> آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-        </ul>
-    </li>
-    <li id="" class="mx-3 menu-item"><a href="" class="nav-menu-item">فریمورک </a>
-        <ul class="sub-menu">
-            <a href="">جنگو</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-        </ul>
-    </li>
-    <li id="" class="mx-3 menu-item"><a href="" class="nav-menu-item">طراحی وب</a>
-        <ul class="sub-menu">
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-        </ul>
-    </li>
-    <li id="" class="mx-3 menu-item"><a href="" class="nav-menu-item">مهارت های ارتباطی</a>
-        <ul class="sub-menu">
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-            <a href="">آیتم</a>
-        </ul>
+<nav class="nav-menu nav-menu-pc  d-none d-md-flex px-4 " id="navbar">
+    {% for cat in categories %}
+        {% if cat.parent == None %}
+            <li id="" class="mx-3 menu-item">
+                <a href="{% url 'videos:category_detail' cat.slug %}"
+                   class="nav-menu-item">{{ cat.title }}
+                </a>
+                <ul class="sub-menu ">
+                    {% for cat in cat.children.all %}
+                        <a href="{% url 'videos:category_detail' cat.slug %}">
+                            {{ cat.title }}
+                        </a>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endif %}
+    {% endfor %}
+
+    <li id="" class="mx-3 menu-item"><a href="{% url "accounts:master" %}" class="nav-menu-item">مدرسین </a>
     </li>
 </nav>
+
+
+
+
+
+
